@@ -129,6 +129,22 @@ def _is_hk_code(stock_code: str) -> bool:
     # 无前缀时，5位纯数字才视为港股（避免误判 A 股代码）
     return code.isdigit() and len(code) == 5
 
+def _get_stock_symbol(stock_code: str) -> str:
+    """
+    根据股票代码前缀返回带市场标识的完整代码
+    
+    Args:
+        stock_code: 股票代码，如 "600000"
+        
+    Returns:
+        带市场前缀的代码，如 "sh600000"
+    """
+    if stock_code.startswith(('920')):
+        return f"bj{stock_code}"
+    elif stock_code.startswith(('6', '5', '9')):
+        return f"sh{stock_code}"
+    else:
+        return f"sz{stock_code}"
 
 def is_hk_stock_code(stock_code: str) -> bool:
     """
@@ -359,10 +375,7 @@ class AkshareFetcher(BaseFetcher):
         import akshare as ak
 
         # 转换代码格式：sh600000, sz000001
-        if stock_code.startswith(('6', '5', '9')):
-            symbol = f"sh{stock_code}"
-        else:
-            symbol = f"sz{stock_code}"
+        symbol = _get_stock_symbol(stock_code)
 
         self._enforce_rate_limit()
 
@@ -408,10 +421,7 @@ class AkshareFetcher(BaseFetcher):
         import akshare as ak
 
         # 转换代码格式：sh600000, sz000001
-        if stock_code.startswith(('6', '5', '9')):
-            symbol = f"sh{stock_code}"
-        else:
-            symbol = f"sz{stock_code}"
+        symbol = _get_stock_symbol(stock_code)
 
         self._enforce_rate_limit()
 
@@ -863,10 +873,7 @@ class AkshareFetcher(BaseFetcher):
             import requests
             
             # 判断市场前缀
-            if stock_code.startswith(('6', '5', '9')):
-                symbol = f"sh{stock_code}"
-            else:
-                symbol = f"sz{stock_code}"
+            symbol = _get_stock_symbol(stock_code)
             
             url = f"http://hq.sinajs.cn/list={symbol}"
             headers = {
@@ -961,10 +968,7 @@ class AkshareFetcher(BaseFetcher):
             import requests
             
             # 判断市场前缀
-            if stock_code.startswith(('6', '5', '9')):
-                symbol = f"sh{stock_code}"
-            else:
-                symbol = f"sz{stock_code}"
+            symbol = _get_stock_symbol(stock_code)
             
             url = f"http://qt.gtimg.cn/q={symbol}"
             headers = {

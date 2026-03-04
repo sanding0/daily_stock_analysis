@@ -284,6 +284,8 @@ class TushareFetcher(BaseFetcher):
             return f"{code}.SH"
         elif code.startswith(('000', '002', '300')):
             return f"{code}.SZ"
+        elif code.startswith(('920')):
+            return f"{code}.BJ"
         else:
             logger.warning(f"无法确定股票 {code} 的市场，默认使用深市")
             return f"{code}.SZ"
